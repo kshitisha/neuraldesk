@@ -1,19 +1,79 @@
 # NeuralDesk
 
-> A multi-tenant AI chatbot platform built with **FastAPI**, **React**, **PostgreSQL**, and pluggable **LLM providers** (OpenAI, Groq, and OpenRouter). Designed with clean architecture, JWT authentication, streaming responses, and modular backend services.
+<p align="center">
+  <img src="assets/logo.png" width="120" alt="NeuralDesk Logo"/>
+</p>
 
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)
-![React](https://img.shields.io/badge/React-19-61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791)
-![License](https://img.shields.io/badge/License-MIT-success)
+<h3 align="center">
+A Production-Ready Multi-Tenant AI Chatbot Platform
+</h3>
+
+<p align="center">
+Configure AI assistants with custom prompts, multiple LLM providers, streaming conversations, secure authentication, and project-based workspaces.
+</p>
+
+<p align="center">
+
+![Python](https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green?style=for-the-badge)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=for-the-badge)
+![MIT](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)
+
+</p>
+
+---
+
+# Live Demo
+
+### Frontend
+
+https://neuraldesk-puce.vercel.app
+
+### Backend API
+
+https://neuraldesk-production.up.railway.app/docs
+
+---
+
+# Application Preview
+
+## Login
+
+![Login](assets/login.png)
+
+---
+
+## Dashboard
+
+![Dashboard](assets/dashboard.png)
+
+---
+
+## Create AI Project
+
+![Project](assets/create-project.png)
+
+---
+
+## AI Conversation
+
+![Chat](assets/chat.png)
+
+---
+
+## Prompt Library
+
+![Prompts](assets/prompts.png)
 
 ---
 
 # Overview
 
-NeuralDesk is a multi-tenant chatbot platform where every user can create multiple AI agents ("Projects"), each with its own:
+NeuralDesk is a production-ready SaaS-style AI chatbot platform that allows users to build and manage multiple AI assistants.
+
+Each assistant (Project) maintains its own:
 
 - System Prompt
 - LLM Provider
@@ -22,23 +82,70 @@ NeuralDesk is a multi-tenant chatbot platform where every user can create multip
 - Prompt Library
 - Conversation History
 
-The platform supports configurable providers through a provider abstraction layer, allowing projects to seamlessly switch between OpenAI, Groq, and OpenRouter without changing business logic.
+The platform follows a modular architecture where business logic is completely separated from AI providers, allowing projects to switch between OpenAI, Groq, and OpenRouter without modifying the application code.
 
 ---
 
 # Features
 
+## Authentication
+
 - JWT Authentication
-- User Registration & Login
-- Secure Password Hashing (bcrypt)
-- AI Project Management (CRUD)
-- Prompt Library per Project
+- Secure Login & Registration
+- Password Hashing (bcrypt)
+- Protected APIs
+- Refresh Token Support
+
+---
+
+## AI Workspace
+
+- Multiple AI Projects
+- Configurable System Prompts
+- Model Selection
+- Temperature Control
+- Conversation History
+- Prompt Library
+
+---
+
+## Chat Experience
+
+- Streaming AI Responses
 - Multiple Conversation Threads
-- Streaming Chat Responses (SSE)
-- OpenAI / Groq / OpenRouter Support
-- File Upload Support
-- Protected Backend APIs
-- PostgreSQL Persistence
+- Markdown Rendering
+- Persistent Chats
+- Real-Time Response Streaming
+
+---
+
+## AI Providers
+
+- OpenAI
+- Groq
+- OpenRouter
+
+Switch providers without changing application logic.
+
+---
+
+## Backend
+
+- FastAPI
+- SQLAlchemy Async
+- Repository Pattern
+- Service Layer Architecture
+- Dependency Injection
+- Async PostgreSQL
+- REST APIs
+
+---
+
+## Deployment
+
+- Frontend deployed on Vercel
+- Backend deployed on Railway
+- PostgreSQL hosted on Neon
 
 ---
 
@@ -54,87 +161,127 @@ The platform supports configurable providers through a provider abstraction laye
 | Database | PostgreSQL (Neon) |
 | Authentication | JWT + bcrypt |
 | AI Providers | OpenAI, Groq, OpenRouter |
-| Deployment | Vercel + Railway |
+| Deployment | Railway + Vercel |
 
 ---
 
-# LLM Provider Abstraction
+# Why Provider Abstraction?
 
-The platform uses an abstraction layer that separates business logic from AI providers.
+NeuralDesk separates AI providers from business logic using a provider interface.
 
-Every provider implements the same interface:
+```
+LLM Provider
 
-```python
-LLMProvider
-    ├── OpenAI
-    ├── Groq
-    └── OpenRouter
+      │
+
+───────────────
+
+OpenAI
+
+Groq
+
+OpenRouter
 ```
 
-This makes switching providers a configuration change instead of an application rewrite.
+Every provider implements the same interface.
 
-During development, OpenAI's free-tier quota was exhausted, so the project was switched to Groq without requiring changes to the service layer.
+This allows the application to switch providers by configuration rather than modifying business logic.
+
+During development, OpenAI's free-tier quota was exhausted. The project was migrated to Groq by simply updating the provider configuration—no service-layer changes were required.
 
 ---
 
-# High-Level Architecture
+# System Architecture
 
+```mermaid
+flowchart LR
+
+A[React + Vite]
+
+-->B[FastAPI]
+
+B-->C[Authentication]
+
+B-->D[Projects]
+
+B-->E[Prompt Library]
+
+B-->F[Conversation Service]
+
+F-->G[Provider Factory]
+
+G-->H[OpenAI]
+
+G-->I[Groq]
+
+G-->J[OpenRouter]
+
+B-->K[(PostgreSQL)]
 ```
-                React + Vite
-                      │
-                Axios API Calls
-                      │
-──────────────────────▼──────────────────────
-                FastAPI Backend
-                      │
-        ┌─────────────┼─────────────┐
-        │             │             │
-      Routes      Services      Repositories
-        │             │             │
-        └─────────────▼─────────────┘
-                PostgreSQL (Neon)
-
-                      │
-
-          LLM Provider Factory
-
-        OpenAI • Groq • OpenRouter
-```
-
-For a detailed explanation of the architecture, design decisions, database schema, scalability, and security, see:
-
-**ARCHITECTURE.md**
 
 ---
 
-# Repository Layout
+# Repository Structure
 
 ```
 neuraldesk/
-│
+
 ├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   ├── core/
-│   │   ├── db/
-│   │   ├── llm/
-│   │   ├── repositories/
-│   │   ├── services/
-│   │   └── schemas/
-│   │
-│   ├── requirements.txt
-│   └── create_tables.py
+
+│ ├── app/
+
+│ │ ├── api/
+
+│ │ ├── core/
+
+│ │ ├── db/
+
+│ │ ├── llm/
+
+│ │ ├── repositories/
+
+│ │ ├── services/
+
+│ │ ├── schemas/
+
+│ │ └── models/
+
 │
+
 ├── frontend/
-│   ├── src/
-│   │   ├── api/
-│   │   ├── pages/
-│   │   ├── components/
-│   │   ├── store/
-│   │   └── hooks/
+
+│ ├── src/
+
+│ │ ├── api/
+
+│ │ ├── pages/
+
+│ │ ├── components/
+
+│ │ ├── hooks/
+
+│ │ └── store/
+
 │
+
+├── assets/
+
+│ ├── login.png
+
+│ ├── dashboard.png
+
+│ ├── create-project.png
+
+│ ├── chat.png
+
+│ └── prompts.png
+
+│
+
 ├── ARCHITECTURE.md
+
 ├── README.md
+
 └── LICENSE
 ```
 
@@ -142,11 +289,13 @@ neuraldesk/
 
 # Running Locally
 
-## Prerequisites
+## Clone
 
-- Python 3.11+
-- Node.js 18+
-- PostgreSQL 15+
+```bash
+git clone https://github.com/yourusername/neuraldesk.git
+
+cd neuraldesk
+```
 
 ---
 
@@ -157,18 +306,12 @@ cd backend
 
 python -m venv .venv
 
-# Windows
-.venv\Scripts\activate
-
-# macOS/Linux
 source .venv/bin/activate
 
 pip install -r requirements.txt
-
-cp .env.example .env
 ```
 
-Configure your environment variables:
+Create a `.env`
 
 ```env
 DATABASE_URL=
@@ -182,19 +325,15 @@ GROQ_API_KEY=
 OPENROUTER_API_KEY=
 ```
 
-Create the database:
+Run
 
 ```bash
 python create_tables.py
-```
 
-Run the backend:
-
-```bash
 uvicorn app.main:app --reload
 ```
 
-Swagger documentation:
+Swagger
 
 ```
 http://localhost:8000/docs
@@ -212,7 +351,7 @@ npm install
 npm run dev
 ```
 
-Frontend:
+Frontend
 
 ```
 http://localhost:5173
@@ -231,9 +370,9 @@ http://localhost:5173
 | GET | `/projects` | List Projects |
 | PUT | `/projects/{id}` | Update Project |
 | DELETE | `/projects/{id}` | Delete Project |
-| POST | `/chat` | Stream AI Response |
+| POST | `/chat` | Stream Chat |
 | POST | `/prompts` | Create Prompt |
-| POST | `/files` | Upload File |
+| POST | `/files` | Upload Files |
 
 ---
 
@@ -241,13 +380,21 @@ http://localhost:5173
 
 ## Frontend
 
-**Platform:** Vercel
+Platform
 
 ```
-Build Command:
-npm run build
+Vercel
+```
 
-Output Directory:
+Build Command
+
+```bash
+npm run build
+```
+
+Output Directory
+
+```
 dist
 ```
 
@@ -255,11 +402,19 @@ dist
 
 ## Backend
 
-**Platform:** Railway
+Platform
 
-Environment variables are configured through Railway's dashboard.
+```
+Railway
+```
 
-The FastAPI application is served using:
+Database
+
+```
+Neon PostgreSQL
+```
+
+Start Command
 
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port $PORT
@@ -267,27 +422,47 @@ uvicorn app.main:app --host 0.0.0.0 --port $PORT
 
 ---
 
-# Future Improvements
+# Future Roadmap
 
-- Redis caching
-- Vector database integration (RAG)
-- Anthropic & Gemini support
-- Team workspaces
-- Role-based permissions
-- Rate limiting
-- Analytics dashboard
-- Observability & tracing
-
----
-
-# License
-
-This project is licensed under the MIT License.
+- [ ] Redis Caching
+- [ ] Vector Database (RAG)
+- [ ] Anthropic Claude Support
+- [ ] Gemini Support
+- [ ] Team Workspaces
+- [ ] Role-Based Access Control
+- [ ] Analytics Dashboard
+- [ ] Docker Support
+- [ ] Kubernetes Deployment
+- [ ] Rate Limiting
+- [ ] Observability & Monitoring
 
 ---
 
-## Author
+# Highlights
 
-**Kshitisha Negi**
+- Production-ready FastAPI backend
+- Repository-Service Architecture
+- Async SQLAlchemy
+- JWT Authentication
+- Streaming AI Responses
+- Multi-Tenant Design
+- Provider Abstraction Layer
+- PostgreSQL Persistence
+- Railway Deployment
+- Vercel Deployment
 
+---
 
+# Author
+
+## Kshitisha Negi
+
+AI/ML Engineer
+
+GitHub: https://github.com/kshitisha
+
+LinkedIn: https://www.linkedin.com/in/kshitisha3333/
+
+---
+
+If you found this project interesting, consider giving it a ⭐.
