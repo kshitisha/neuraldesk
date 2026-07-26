@@ -11,40 +11,6 @@
 
 ---
 
-## Live Demo
-
-**Frontend**
-
-https://neuraldesk-puce.vercel.app
-
-**Backend API**
-
-https://YOUR-RAILWAY-URL.up.railway.app/docs
-
-**Architecture Document**
-
-See [ARCHITECTURE.md](./ARCHITECTURE.md)
-
----
-
-# Screenshots
-
-> *(Replace these with your own screenshots.)*
-
-## Login
-
-![Login](./screenshots/login.png)
-
-## Dashboard
-
-![Dashboard](./screenshots/dashboard.png)
-
-## Chat
-
-![Chat](./screenshots/chat.png)
-
----
-
 # Overview
 
 NeuralDesk is a multi-tenant chatbot platform where every user can create multiple AI agents ("Projects"), each with its own:
