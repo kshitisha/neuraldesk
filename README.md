@@ -325,6 +325,3 @@ This project is licensed under the MIT License.
 **Kshitisha Negi**
 
 
-
-Portfolio:
-https://YOUR-PORTFOLIO
