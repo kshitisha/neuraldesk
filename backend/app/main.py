@@ -19,27 +19,25 @@ def create_app() -> FastAPI:
         title=settings.APP_NAME,
         description="Production-grade multi-tenant chatbot platform.",
         version="1.0.0",
-        docs_url="/docs" if not settings.is_production else None,
-        redoc_url="/redoc" if not settings.is_production else None,
+        docs_url="/docs",
+        redoc_url="/redoc",
     )
 
     app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://neuraldesk-puce.vercel.app",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
     @app.exception_handler(AppException)
     async def app_exception_handler(request: Request, exc: AppException):
         return JSONResponse(
             status_code=exc.status_code,
             content={"detail": exc.detail},
         )
+
     @app.exception_handler(Exception)
     async def generic_exception_handler(request: Request, exc: Exception):
         logger.error(f"Unhandled exception: {exc}", exc_info=True)
@@ -47,6 +45,7 @@ def create_app() -> FastAPI:
             status_code=500,
             content={"detail": "An unexpected error occurred."},
         )
+
     app.include_router(api_router)
 
     @app.get("/health", tags=["Health"])
