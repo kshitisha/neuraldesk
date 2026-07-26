@@ -324,11 +324,7 @@ This project is licensed under the MIT License.
 
 **Kshitisha Negi**
 
-GitHub:
-https://github.com/kshitisha
 
-LinkedIn:
-https://linkedin.com/in/YOUR-LINKEDIN
 
 Portfolio:
 https://YOUR-PORTFOLIO
