@@ -1,196 +1,334 @@
-# NeuralDesk — Production-Grade Chatbot Platform
+# NeuralDesk
 
-> A multi-tenant AI chatbot platform built as a hiring assessment for a Senior AI Engineer role. Designed with production software practices: clean architecture, LLM provider abstraction, streaming responses, and JWT authentication.
+> A multi-tenant AI chatbot platform built with **FastAPI**, **React**, **PostgreSQL**, and pluggable **LLM providers** (OpenAI, Groq, and OpenRouter). Designed with clean architecture, JWT authentication, streaming responses, and modular backend services.
 
-**Live Demo:** https://neuraldesk-puce.vercel.app/login  
-**Backend API Docs:** https://your-railway-url.up.railway.app/docs  
-**GitHub:** https://github.com/kshitisha/neuraldesk
-
----
-
-## What It Does
-
-NeuralDesk lets users create AI "projects" — each project is a configurable AI agent with its own system prompt, model, temperature, and prompt library. Users can have multiple projects, each with multiple conversation threads, and chat with agents in real-time via streaming responses.
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)
+![React](https://img.shields.io/badge/React-19-61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791)
+![License](https://img.shields.io/badge/License-MIT-success)
 
 ---
 
-## Tech Stack
+## Live Demo
+
+**Frontend**
+
+https://neuraldesk-puce.vercel.app
+
+**Backend API**
+
+https://YOUR-RAILWAY-URL.up.railway.app/docs
+
+**Architecture Document**
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md)
+
+---
+
+# Screenshots
+
+> *(Replace these with your own screenshots.)*
+
+## Login
+
+![Login](./screenshots/login.png)
+
+## Dashboard
+
+![Dashboard](./screenshots/dashboard.png)
+
+## Chat
+
+![Chat](./screenshots/chat.png)
+
+---
+
+# Overview
+
+NeuralDesk is a multi-tenant chatbot platform where every user can create multiple AI agents ("Projects"), each with its own:
+
+- System Prompt
+- LLM Provider
+- AI Model
+- Temperature
+- Prompt Library
+- Conversation History
+
+The platform supports configurable providers through a provider abstraction layer, allowing projects to seamlessly switch between OpenAI, Groq, and OpenRouter without changing business logic.
+
+---
+
+# Features
+
+- JWT Authentication
+- User Registration & Login
+- Secure Password Hashing (bcrypt)
+- AI Project Management (CRUD)
+- Prompt Library per Project
+- Multiple Conversation Threads
+- Streaming Chat Responses (SSE)
+- OpenAI / Groq / OpenRouter Support
+- File Upload Support
+- Protected Backend APIs
+- PostgreSQL Persistence
+
+---
+
+# Tech Stack
 
 | Layer | Technology |
-|---|---|
-| Backend | FastAPI (Python 3.11), async |
-| Database | PostgreSQL (Neon serverless) |
-| ORM | SQLAlchemy 2.0 async |
-| Auth | JWT (HS256), bcrypt password hashing |
-| LLM Providers | OpenAI, Groq, OpenRouter (swappable via factory pattern) |
+|---------|------------|
 | Frontend | React + TypeScript + Vite |
+| Styling | Tailwind CSS |
 | State Management | Zustand |
-| Styling | Tailwind CSS v4 |
-| Deployment | Railway (backend) + Vercel (frontend) |
+| Backend | FastAPI |
+| ORM | SQLAlchemy Async |
+| Database | PostgreSQL (Neon) |
+| Authentication | JWT + bcrypt |
+| AI Providers | OpenAI, Groq, OpenRouter |
+| Deployment | Vercel + Railway |
 
 ---
 
-## A Note on LLM Provider
+# LLM Provider Abstraction
 
-The assignment specifies the OpenAI Responses API. During development, the OpenAI free-tier quota was exhausted. Rather than block progress, I made use of the LLM abstraction layer built into the architecture to swap in **Groq** — a free-tier LLM provider with an OpenAI-compatible API that offers extremely fast inference via their LPU hardware.
+The platform uses an abstraction layer that separates business logic from AI providers.
 
-This swap required **zero changes to business logic** — only the provider name in the project config changes. This is exactly why the abstraction layer was designed this way: the system supports OpenAI, Groq, and OpenRouter interchangeably. To switch back to OpenAI, set `provider: "openai"` when creating a project and supply a valid key.
+Every provider implements the same interface:
 
----
+```python
+LLMProvider
+    ├── OpenAI
+    ├── Groq
+    └── OpenRouter
+```
 
-## Features
+This makes switching providers a configuration change instead of an application rewrite.
 
-- User registration and login with JWT authentication
-- Create, edit, and delete AI projects (agents)
-- Per-project configuration: system prompt, model, temperature, provider
-- Prompt library per project — reusable prompts injectable into chat
-- Multiple conversation threads per project
-- Real-time streaming chat via Server-Sent Events (SSE)
-- File upload to OpenAI Files API (stored with project metadata)
-- Full CRUD on projects and prompts
-- Protected routes on both frontend and backend
+During development, OpenAI's free-tier quota was exhausted, so the project was switched to Groq without requiring changes to the service layer.
 
 ---
 
-## Running Locally
+# High-Level Architecture
 
-### Prerequisites
+```
+                React + Vite
+                      │
+                Axios API Calls
+                      │
+──────────────────────▼──────────────────────
+                FastAPI Backend
+                      │
+        ┌─────────────┼─────────────┐
+        │             │             │
+      Routes      Services      Repositories
+        │             │             │
+        └─────────────▼─────────────┘
+                PostgreSQL (Neon)
+
+                      │
+
+          LLM Provider Factory
+
+        OpenAI • Groq • OpenRouter
+```
+
+For a detailed explanation of the architecture, design decisions, database schema, scalability, and security, see:
+
+**ARCHITECTURE.md**
+
+---
+
+# Repository Layout
+
+```
+neuraldesk/
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── core/
+│   │   ├── db/
+│   │   ├── llm/
+│   │   ├── repositories/
+│   │   ├── services/
+│   │   └── schemas/
+│   │
+│   ├── requirements.txt
+│   └── create_tables.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── store/
+│   │   └── hooks/
+│
+├── ARCHITECTURE.md
+├── README.md
+└── LICENSE
+```
+
+---
+
+# Running Locally
+
+## Prerequisites
 
 - Python 3.11+
 - Node.js 18+
-- PostgreSQL 15
+- PostgreSQL 15+
 
-### Backend
+---
+
+## Backend
 
 ```bash
 cd backend
 
-# Create and activate virtual environment
 python -m venv .venv
-.venv\Scripts\activate        # Windows
-source .venv/bin/activate     # Mac/Linux
 
-# Install dependencies
+# Windows
+.venv\Scripts\activate
+
+# macOS/Linux
+source .venv/bin/activate
+
 pip install -r requirements.txt
 
-# Create .env file
 cp .env.example .env
-# Fill in your DATABASE_URL, SECRET_KEY, and API keys
-
-# Create database tables
-python create_tables.py
-
-# Start the server
-uvicorn app.main:app --reload --port 8000
 ```
 
-The API will be available at `http://localhost:8000`  
-Swagger docs at `http://localhost:8000/docs`
+Configure your environment variables:
 
-### Frontend
+```env
+DATABASE_URL=
+
+SECRET_KEY=
+
+OPENAI_API_KEY=
+
+GROQ_API_KEY=
+
+OPENROUTER_API_KEY=
+```
+
+Create the database:
+
+```bash
+python create_tables.py
+```
+
+Run the backend:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Swagger documentation:
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+## Frontend
 
 ```bash
 cd frontend
 
-# Install dependencies
 npm install
 
-# Start dev server
 npm run dev
 ```
 
-The frontend will be available at `http://localhost:5173`
+Frontend:
 
----
-
-## Environment Variables
-
-Create `backend/.env` with the following:
-
-```env
-APP_ENV=development
-APP_NAME=NeuralDesk
-DEBUG=true
-
-DATABASE_URL=postgresql+asyncpg://user:password@host:5432/neuraldesk
-
-SECRET_KEY=your-secret-key-minimum-32-characters
-
-OPENAI_API_KEY=sk-your-openai-key
-GROQ_API_KEY=your-groq-api-key
-OPENROUTER_API_KEY=your-openrouter-key
-DEFAULT_PROVIDER=groq
-
-ACCESS_TOKEN_EXPIRE_MINUTES=15
-REFRESH_TOKEN_EXPIRE_DAYS=7
+```
+http://localhost:5173
 ```
 
 ---
 
-## API Endpoints
+# API Endpoints
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/v1/auth/register` | ❌ | Register new user |
-| POST | `/api/v1/auth/login` | ❌ | Login, get tokens |
-| POST | `/api/v1/auth/refresh` | ❌ | Refresh access token |
-| GET | `/api/v1/auth/me` | ✅ | Get current user |
-| GET | `/api/v1/projects` | ✅ | List user's projects |
-| POST | `/api/v1/projects` | ✅ | Create project |
-| GET | `/api/v1/projects/{id}` | ✅ | Get project |
-| PUT | `/api/v1/projects/{id}` | ✅ | Update project |
-| DELETE | `/api/v1/projects/{id}` | ✅ | Delete project |
-| GET | `/api/v1/projects/{id}/prompts` | ✅ | List prompt library |
-| POST | `/api/v1/projects/{id}/prompts` | ✅ | Add prompt |
-| DELETE | `/api/v1/projects/{id}/prompts/{pid}` | ✅ | Delete prompt |
-| POST | `/api/v1/projects/{id}/conversations` | ✅ | Start conversation |
-| GET | `/api/v1/projects/{id}/conversations` | ✅ | List conversations |
-| GET | `/api/v1/projects/{id}/conversations/{cid}/messages` | ✅ | Load messages |
-| POST | `/api/v1/projects/{id}/conversations/{cid}/chat` | ✅ | Chat (SSE stream) |
-| POST | `/api/v1/projects/{id}/files` | ✅ | Upload file |
-| GET | `/api/v1/projects/{id}/files` | ✅ | List files |
-| DELETE | `/api/v1/projects/{id}/files/{fid}` | ✅ | Delete file |
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/auth/register` | Register |
+| POST | `/auth/login` | Login |
+| GET | `/auth/me` | Current User |
+| POST | `/projects` | Create Project |
+| GET | `/projects` | List Projects |
+| PUT | `/projects/{id}` | Update Project |
+| DELETE | `/projects/{id}` | Delete Project |
+| POST | `/chat` | Stream AI Response |
+| POST | `/prompts` | Create Prompt |
+| POST | `/files` | Upload File |
 
 ---
 
-## Deployment
+# Deployment
 
-### Backend — Railway
+## Frontend
 
-1. Connect GitHub repo to Railway
-2. Set root directory to `backend/`
-3. Add all environment variables in the Variables tab
-4. Railway auto-detects Python and runs `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+**Platform:** Vercel
 
-### Frontend — Vercel
+```
+Build Command:
+npm run build
 
-1. Connect GitHub repo to Vercel
-2. Set root directory to `frontend/`
-3. Set build command: `npm run build`
-4. Set output directory: `dist`
-5. Add environment variable: `VITE_API_URL=https://your-railway-url.up.railway.app`
+Output Directory:
+dist
+```
 
 ---
 
-## Project Structure
+## Backend
 
+**Platform:** Railway
+
+Environment variables are configured through Railway's dashboard.
+
+The FastAPI application is served using:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
-neuraldesk/
-├── backend/
-│   ├── app/
-│   │   ├── api/v1/routes/     # Auth, projects, chat, files
-│   │   ├── core/              # Config, security, exceptions
-│   │   ├── db/models/         # SQLAlchemy models
-│   │   ├── repositories/      # Data access layer
-│   │   ├── services/          # Business logic
-│   │   ├── llm/               # LLM abstraction layer
-│   │   └── schemas/           # Pydantic request/response schemas
-│   ├── requirements.txt
-│   └── create_tables.py
-└── frontend/
-    └── src/
-        ├── api/               # Typed API client
-        ├── pages/             # Login, Register, Dashboard, Chat
-        ├── store/             # Zustand state
-        └── hooks/             # useChat, useAuth
-```
+
+---
+
+# Future Improvements
+
+- Redis caching
+- Vector database integration (RAG)
+- Anthropic & Gemini support
+- Team workspaces
+- Role-based permissions
+- Rate limiting
+- Analytics dashboard
+- Observability & tracing
+
+---
+
+# License
+
+This project is licensed under the MIT License.
+
+---
+
+## Author
+
+**Kshitisha Negi**
+
+GitHub:
+https://github.com/kshitisha
+
+LinkedIn:
+https://linkedin.com/in/YOUR-LINKEDIN
+
+Portfolio:
+https://YOUR-PORTFOLIO
