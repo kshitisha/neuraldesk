@@ -87,7 +87,7 @@ export default function ChatPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `http://localhost:8000/api/v1/projects/${projectId}/conversations/${activeConversationId}/chat`,
+  `https://neuraldesk-production.up.railway.app/api/v1/projects/${projectId}/conversations/${activeConversationId}/chat`,
         {
           method: "POST",
           headers: {
