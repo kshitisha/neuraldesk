@@ -1,8 +1,6 @@
 # NeuralDesk
 
-<p align="center">
-  <img src="assets/logo.png" width="120" alt="NeuralDesk Logo"/>
-</p>
+
 
 <h3 align="center">
 A Production-Ready Multi-Tenant AI Chatbot Platform
@@ -41,31 +39,27 @@ https://neuraldesk-production.up.railway.app/docs
 
 ## Login
 
-![Login](assets/login.png)
+![Login](screenshots/Login%20page.png)
 
 ---
 
-## Dashboard
+## Project Dashboard
 
-![Dashboard](assets/dashboard.png)
+![Dashboard](screenshots/Project%20Dashboard.png)
 
 ---
 
 ## Create AI Project
 
-![Project](assets/create-project.png)
+![Project](screenshots/Create%20AI%20project.png)
 
 ---
 
 ## AI Conversation
 
-![Chat](assets/chat.png)
+![Chat](screenshots/Chat.png)
 
----
 
-## Prompt Library
-
-![Prompts](assets/prompts.png)
 
 ---
 
