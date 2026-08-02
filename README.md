@@ -1,6 +1,6 @@
 # NeuralDesk
 
-> Build, configure, and deploy multiple AI assistants — each with its own LLM provider, system prompt, and conversation history. Switch between OpenAI, Groq, and OpenRouter without touching application code.
+> 
 
 
 
