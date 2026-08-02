@@ -9,10 +9,6 @@ A Production-Ready Multi-Tenant AI Chatbot Platform
 </h3>
 
 <p align="center">
-Configure AI assistants with custom prompts, multiple LLM providers, streaming conversations, secure authentication, and project-based workspaces.
-</p>
-
-<p align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green?style=for-the-badge)
